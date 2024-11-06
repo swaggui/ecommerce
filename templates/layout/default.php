@@ -34,20 +34,25 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 <body style="background-color: rgb(47, 80, 61); color: white;">
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(198, 159, 104);">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="color: white;">Sarah</a>
+        <a class="navbar-brand" href="<?= $this->Url->build('/') ?>" style="color: white;">
+            <?= $this->Html->image('logo.jpg', ['alt' => 'Sarah Logo', 'style' => 'width: 40px; height: auto;']) ?>
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="#" style="color: white;">Home</a>
+                    <a class="nav-link" href="<?= $this->Url->build('/') ?>" style="color: white;">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" style="color: white;">Produtos</a>
+                    <a class="nav-link" href="<?= $this->Url->build('/produtos/loja') ?>" style="color: white;">Loja</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" style="color: white;">Contato</a>
+                </li>
+                <li class="nav-item">
+                    <?= $this->Html->link('Usuários', ['controller' => 'Users', 'action' => 'index'], ['class' => 'nav-link', 'style' => 'color: white;']) ?>
                 </li>
             </ul>
         </div>

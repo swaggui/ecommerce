@@ -42,6 +42,9 @@ return function (RouteBuilder $routes): void {
         // Rota para logout
         $builder->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
 
+        // Rota para a loja de produtos
+        $builder->connect('/loja', ['controller' => 'Produtos', 'action' => 'loja']);
+
         // Rota para a página de exibição
         $builder->connect('/pages/*', 'Pages::display');
 

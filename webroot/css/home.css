@@ -73,3 +73,7 @@ hr {
 #url-rewriting-warning {
     display: none;
 }
+.form-control {
+    color: black !important;
+    background-color: white !important;
+}

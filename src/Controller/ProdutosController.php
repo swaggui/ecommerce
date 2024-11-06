@@ -48,12 +48,11 @@ class ProdutosController extends AppController
     {
         $produto = $this->Produtos->newEmptyEntity();
         if ($this->request->is('post')) {
-            // Gerenciar o upload da imagem
             $imagem = $this->request->getData('imagem');
             if ($imagem && $imagem->getError() === UPLOAD_ERR_OK) {
-                $nomeArquivo = time() . '-' . $imagem->getClientFilename(); // Nome único para a imagem
-                $imagem->moveTo(WWW_ROOT . 'img/produtos/' . $nomeArquivo); // Salvando a imagem na pasta 'img/produtos'
-                $produto->imagem = $nomeArquivo; // Armazenando o nome da imagem no banco
+                $nomeArquivo = time() . '-' . $imagem->getClientFilename();
+                $imagem->moveTo(WWW_ROOT . 'img/produtos/' . $nomeArquivo);
+                $produto->imagem = $nomeArquivo;
             }
 
             $produto = $this->Produtos->patchEntity($produto, $this->request->getData());
@@ -113,5 +112,10 @@ class ProdutosController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+    public function loja()
+    {
+        $produtos = $this->Produtos->find('all');
+        $this->set(compact('produtos'));
     }
 }
