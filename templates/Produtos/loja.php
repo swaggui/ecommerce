@@ -11,25 +11,17 @@
 <?php
 $imagens = ['produto1.jpg', 'produto2.jpg', 'produto3.jpg'];
 ?>
-
 <div id="produtosCarousel" class="carousel slide mt-4" data-bs-ride="carousel">
     <div class="carousel-inner">
-        <?php foreach ($produtos as $index => $produto): ?>
+        <?php foreach ($imagens as $index => $imagem): ?>
             <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
-                <div class="row">
-                    <div class="col-md-4 mb-4">
-                        <div class="card shadow-sm" style="border: none;">
-                            <div class="card-img-top text-center">
-                                <!-- Use o nome da imagem diretamente, assim como testou -->
-                                <?= $this->Html->image('/img/produto1.jpg' . h($produto->imagem), ['alt' => h($produto->nome), 'class' => 'img-fluid', 'style' => 'max-height: 200px;']) ?>
-                            </div>
-                            <div class="card-body text-center" style="background-color: rgb(47, 80, 61); color: white;">
-                                <h5><?= h($produto->nome) ?></h5>
-                                <p class="card-text"><?= h($produto->descricao) ?></p>
-                                <p class="card-text" style="color: rgb(198, 159, 104); font-weight: bold;">R$ <?= $this->Number->format($produto->preco) ?></p>
-                                <?= $this->Html->link('Ver detalhes', ['action' => 'view', $produto->id], ['class' => 'btn btn-light']) ?>
-                            </div>
-                        </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-6 text-center">
+                        <?= $this->Html->image($imagem, [
+                            'alt' => "Imagem {$index}",
+                            'class' => 'img-fluid',
+                            'style' => 'max-height: 400px;',
+                        ]) ?>
                     </div>
                 </div>
             </div>
@@ -37,16 +29,13 @@ $imagens = ['produto1.jpg', 'produto2.jpg', 'produto3.jpg'];
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#produtosCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
+        <span class="visually-hidden">Anterior</span>
     </button>
     <button class="carousel-control-next" type="button" data-bs-target="#produtosCarousel" data-bs-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
+        <span class="visually-hidden">Próximo</span>
     </button>
 </div>
-<img src="/img/produto1.jpg" alt="Teste Produto 1">
-<img src="/img/produto2.jpg" alt="Teste Produto 2">
-<img src="/img/produto3.jpg" alt="Teste Produto 3">
 
 <div class="container mt-4">
     <div class="row">
@@ -103,22 +92,76 @@ $imagens = ['produto1.jpg', 'produto2.jpg', 'produto3.jpg'];
     </div>
     <div id="cartContent" class="cart-content">
         <p id="emptyCartMessage">Seu carrinho está vazio. Adicione produtos para começar!</p>
-
-        <div class="frete-calc">
-            <h5>Calcular Frete</h5>
-            <input type="text" id="cep" placeholder="Digite seu CEP" class="form-control" />
-            <button id="calcFreteBtn" class="btn btn-light mt-2">Calcular Frete</button>
-        </div>
-
-        <div id="freteSugestoes" style="display:none;">
-            <h6>Sugestões de Frete:</h6>
-            <ul id="freteList"></ul>
-        </div>
+        <ul id="cartItems" class="list-group"></ul>
     </div>
     <div class="cart-footer">
+        <p id="cartTotal">Total: R$ 0,00</p>
         <button class="btn w-100" style="background-color: rgb(198, 159, 104); color: white;">Finalizar Compra</button>
     </div>
 </div>
+<script>
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Adicionar produto ao carrinho
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', () => {
+            const id = button.dataset.id;
+            const nome = button.dataset.nome;
+            const preco = parseFloat(button.dataset.preco);
+
+            // Verificar se o produto já está no carrinho
+            const existingProduct = cart.find(item => item.id === id);
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({ id, nome, preco, quantity: 1 });
+            }
+
+            // Atualizar o LocalStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart(); // Atualizar a sidebar
+            alert(`Produto "${nome}" adicionado ao carrinho!`);
+        });
+    });
+
+    // Renderizar o carrinho na sidebar
+    function renderCart() {
+        const cartContent = document.getElementById('cartItems');
+        const emptyMessage = document.getElementById('emptyCartMessage');
+        const cartTotal = document.getElementById('cartTotal');
+
+        // Limpar a lista atual
+        cartContent.innerHTML = '';
+
+        if (cart.length === 0) {
+            emptyMessage.style.display = 'block';
+            cartTotal.textContent = 'Total: R$ 0,00';
+            return;
+        }
+
+        emptyMessage.style.display = 'none';
+
+        // Adicionar itens à lista
+        let total = 0;
+        cart.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.innerHTML = `
+                <span>
+                    ${item.nome} (x${item.quantity})
+                </span>
+                <span>R$ ${(item.preco * item.quantity).toFixed(2).replace('.', ',')}</span>
+            `;
+            cartContent.appendChild(li);
+            total += item.preco * item.quantity;
+        });
+
+        cartTotal.textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+    }
+
+    // Atualizar o carrinho ao carregar a página
+    document.addEventListener('DOMContentLoaded', renderCart);
+</script>
 
 <script>
     document.getElementById("calcFreteBtn").addEventListener("click", function() {
@@ -146,6 +189,71 @@ $imagens = ['produto1.jpg', 'produto2.jpg', 'produto3.jpg'];
             });
     });
 </script>
+<div class="container mt-5">
+    <div class="row mt-4">
+        <?php foreach ($produtos as $produto): ?>
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm" style="border: none;">
+                    <!-- Imagem do Produto -->
+                    <div class="card-img-top">
+                        <?= $this->Html->image(
+                            'produtos/' . $produto->imagem,
+                            [
+                                'alt' => $produto->nome,
+                                'class' => 'img-fluid',
+                                'style' => 'max-height: 200px; object-fit: cover;'
+                            ]
+                        ) ?>
+                    </div>
+                    <div class="card-body text-center" style="background-color: rgb(198, 159, 104); color: white;">
+                        <!-- Nome do Produto -->
+                        <h5 class="card-title"><?= h($produto->nome) ?></h5>
+                        <!-- Preço do Produto -->
+                        <p class="card-text">R$ <?= number_format($produto->preco, 2, ',', '.') ?></p>
+                        <!-- Botão de Adicionar ao Carrinho -->
+                        <button class="btn btn-dark add-to-cart"
+                                data-id="<?= $produto->id ?>"
+                                data-nome="<?= h($produto->nome) ?>"
+                                data-preco="<?= $produto->preco ?>">
+                            Adicionar ao Carrinho
+                        </button>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<script>
+    const cart = [];
+
+    // Adicionar produto ao carrinho
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', () => {
+            const id = button.dataset.id;
+            const nome = button.dataset.nome;
+            const preco = parseFloat(button.dataset.preco);
+
+            // Verificar se o produto já está no carrinho
+            const existingProduct = cart.find(item => item.id === id);
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({ id, nome, preco, quantity: 1 });
+            }
+
+            // Atualizar o LocalStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`Produto "${nome}" adicionado ao carrinho!`);
+        });
+    });
+
+    // Exibir carrinho no console (para testes)
+    document.getElementById('cartButton').addEventListener('click', () => {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        console.log(cart);
+    });
+</script>
+
 
 <style>
     .carousel-fullwidth {
@@ -195,6 +303,15 @@ $imagens = ['produto1.jpg', 'produto2.jpg', 'produto3.jpg'];
     }
     .cart-sidebar.open {
         right: 0;
+    }
+    .card {
+        transition: transform 0.2s ease;
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+    .card-body {
+        padding: 15px;
     }
 </style>
 

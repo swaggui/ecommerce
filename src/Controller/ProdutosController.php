@@ -48,6 +48,8 @@ class ProdutosController extends AppController
     {
         $produto = $this->Produtos->newEmptyEntity();
         if ($this->request->is('post')) {
+            $produto = $this->Produtos->patchEntity($produto, $this->request->getData());
+
             $imagem = $this->request->getData('imagem');
             if ($imagem && $imagem->getError() === UPLOAD_ERR_OK) {
                 $nomeArquivo = time() . '-' . $imagem->getClientFilename();
@@ -55,7 +57,6 @@ class ProdutosController extends AppController
                 $produto->imagem = $nomeArquivo;
             }
 
-            $produto = $this->Produtos->patchEntity($produto, $this->request->getData());
             if ($this->Produtos->save($produto)) {
                 $this->Flash->success(__('O produto foi salvo com sucesso.'));
                 return $this->redirect(['action' => 'index']);
@@ -76,15 +77,16 @@ class ProdutosController extends AppController
     {
         $produto = $this->Produtos->get($id, ['contain' => []]);
         if ($this->request->is(['patch', 'post', 'put'])) {
+            $produto = $this->Produtos->patchEntity($produto, $this->request->getData());
+
             // Gerenciar o upload da imagem
             $imagem = $this->request->getData('imagem');
             if ($imagem && $imagem->getError() === UPLOAD_ERR_OK) {
                 $nomeArquivo = time() . '-' . $imagem->getClientFilename();
                 $imagem->moveTo(WWW_ROOT . 'img/produtos/' . $nomeArquivo);
-                $produto->imagem = $nomeArquivo;
+                $produto->imagem = $nomeArquivo; // Atribuir o nome do arquivo à entidade
             }
 
-            $produto = $this->Produtos->patchEntity($produto, $this->request->getData());
             if ($this->Produtos->save($produto)) {
                 $this->Flash->success(__('O produto foi atualizado com sucesso.'));
                 return $this->redirect(['action' => 'index']);
@@ -93,6 +95,7 @@ class ProdutosController extends AppController
         }
         $this->set(compact('produto'));
     }
+
 
     /**
      * Delete method

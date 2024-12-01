@@ -20,6 +20,7 @@
                         echo $this->Form->control('descricao', ['class' => 'form-control mb-3']);
                         echo $this->Form->control('preco', ['class' => 'form-control mb-3']);
                         echo $this->Form->control('estoque', ['class' => 'form-control mb-3']);
+                        echo $this->Form->create(null, ['type' => 'file']);
                         echo $this->Form->control('imagem', ['type' => 'file', 'class' => 'form-control mb-3']);
                         echo $this->Form->control('tamanho', ['class' => 'form-control mb-3']);
                         echo $this->Form->control('cor', ['class' => 'form-control mb-3']);
@@ -28,6 +29,8 @@
                     </fieldset>
                     <div class="d-flex justify-content-end mt-3">
                         <?= $this->Form->button(__('Submit'), ['class' => 'btn btn-light']); ?>
+                        <?= print $produto ?>
+                        <?= $this->Flash->render() ?>
                     </div>
                     <?= $this->Form->end() ?>
                 </div>
