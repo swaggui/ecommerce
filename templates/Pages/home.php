@@ -86,7 +86,7 @@ endif;
                     <a class="nav-link" href="<?= $this->Url->build('/produtos/loja') ?>" style="color: white;">Loja</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" style="color: white;">Contato</a>
+                    <a class="nav-link" href="<?= $this->Url->build('/produtos') ?>" style="color: white;">Produtos</a>
                 </li>
                 </li>
                 <li class="nav-item">

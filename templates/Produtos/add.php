@@ -29,8 +29,6 @@
                     </fieldset>
                     <div class="d-flex justify-content-end mt-3">
                         <?= $this->Form->button(__('Submit'), ['class' => 'btn btn-light']); ?>
-                        <?= print $produto ?>
-                        <?= $this->Flash->render() ?>
                     </div>
                     <?= $this->Form->end() ?>
                 </div>

@@ -50,5 +50,7 @@ return function (RouteBuilder $routes): void {
 
         // Fallbacks para outras rotas
         $builder->fallbacks();
+
+        $builder->connect('/checkout', ['controller' => 'Orders', 'action' => 'checkout']);
     });
 };

@@ -18,7 +18,23 @@ class ProdutosController extends AppController
      */
     public function index()
     {
-        $produtos = $this->paginate($this->Produtos);
+        $this->paginate = [
+            'limit' => 9,
+        ];
+
+        $query = $this->Produtos->find();
+
+        $minPreco = $this->request->getQuery('min_preco');
+        $maxPreco = $this->request->getQuery('max_preco');
+
+        if (!empty($minPreco)) {
+            $query->where(['preco >=' => $minPreco]);
+        }
+        if (!empty($maxPreco)) {
+            $query->where(['preco <=' => $maxPreco]);
+        }
+
+        $produtos = $this->paginate($query);
 
         $this->set(compact('produtos'));
     }
